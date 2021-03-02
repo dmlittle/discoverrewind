@@ -1,0 +1,34 @@
+version: "2.4"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    command: "--port 5000 --appPort 5001 --build ./cmd/serve --bin /tmp/gin-serve"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      DATABASE_DEBUG: "$DATABASE_DEBUG"
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app:delegated
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache:delegated
+
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    environment:
+      PGDATA: /tmp/pgdata
+      POSTGRES_DB: "discoverrewind"
+      POSTGRES_PASSWORD: "discoverrewind"
+      POSTGRES_USER: "discoverrewind_admin"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./tmp/pgdata:/tmp/pgdata:cached"
+      - "~/.inputrc:/root/.inputrc:delegated"
+      - "~/.psqlrc:/root/.psqlrc:delegated"

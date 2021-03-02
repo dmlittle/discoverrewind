@@ -1,0 +1,9 @@
+FROM golang:1.16.0
+
+ENV TZ=UTC
+
+WORKDIR /app
+
+RUN go get github.com/codegangsta/gin
+
+ENTRYPOINT ["gin", "--immediate"]

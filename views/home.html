@@ -1,0 +1,349 @@
+{{define "content"}}
+<div class="h-screen flex overflow-hidden bg-gray-900"
+     x-data="{ sidebarOpen: false }"
+     @keydown.window.escape="sidebarOpen = false">
+    <div x-show="sidebarOpen"
+         class="lg:hidden"
+         x-cloak>
+        <div class="fixed inset-0 flex z-40">
+            <div @click="sidebarOpen = false"
+                 x-show="sidebarOpen"
+                 x-transition:enter="transition-opacity ease-linear duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity ease-linear duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0"
+                 x-cloak>
+                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+            </div>
+            <div x-show="sidebarOpen"
+                 x-transition:enter="transition ease-in-out duration-300 transform"
+                 x-transition:enter-start="-translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in-out duration-300 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="-translate-x-full"
+                 class="relative flex-1 flex flex-col max-w-xs w-full bg-gray-800"
+                 x-cloak>
+                <div class="absolute top-0 right-0 -mr-12 pt-2">
+                    <button x-show="sidebarOpen"
+                            @click="sidebarOpen = false"
+                            class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                            x-cloak>
+                        <span class="sr-only">Close sidebar</span>
+                        <svg class="h-6 w-6 text-white"
+                             xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor"
+                             aria-hidden="true">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                    <div class="flex-shrink-0 flex items-center px-4">
+                        <svg class="h-8 w-8 text-spotify-green-primary"
+                             viewBox="0 0 250 250"
+                             fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M250 125C250 194.036 194.036 250 125 250C55.9644 250 0 194.036 0 125C0 55.9644 55.9644 0 125 0C194.036 0 250 55.9644 250 125ZM45.7287 117.441L108.453 63.1195C114.93 57.5107 125 62.1113 125 70.6788V99.5966L167.12 63.1195C173.597 57.5107 183.667 62.1113 183.667 70.6788V179.321C183.667 187.889 173.597 192.489 167.12 186.881L125 150.403V179.321C125 187.889 114.93 192.489 108.453 186.881L45.7287 132.559C41.1241 128.572 41.1241 121.428 45.7287 117.441Z"
+                                  fill="currentColor"/>
+                        </svg>
+                        <h1 class="inline-flex ml-3 text-xl font-bold font-display text-white">DiscoverRewind</h1>
+                    </div>
+                    <nav class="mt-5 px-2 space-y-1">
+                        <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Playlist Archives
+                        </h3>
+                        <div class="space-y-1">
+                            <a href="#"
+                               class="flex items-center px-3 py-2 text-sm font-medium text-gray-400 rounded-md truncate">
+                                Discover Weekly
+                            </a>
+                            {{range .snapshots}}
+                            {{if eq .ID $.currentSnapshot.ID}}
+                            <a href="/home?snapshot={{.ID}}"
+                               class="flex items-center px-5 py-1 text-xs font-medium text-gray-300 bg-gray-700 rounded-md truncate">
+                                {{date .CreatedAt}}
+                            </a>
+                            {{else}}
+                            <a href="/home?snapshot={{.ID}}"
+                               class="flex items-center px-5 py-1 text-xs font-medium text-gray-400 rounded-md truncate">
+                                {{date .CreatedAt}}
+                            </a>
+                            {{end}}
+                            {{end}}
+                        </div>
+
+                    </nav>
+                </div>
+                <div class="flex-shrink-0 flex bg-gray-700 p-4">
+                    <a href="/logout"
+                       class="flex-shrink-0 group block">
+                        <div class="flex items-center">
+                            <div>
+                                {{if .profileImageURL}}
+                                <img class="inline-block h-10 w-10 rounded-full"
+                                     src="{{ .profileImageURL}}"
+                                     alt="Profile Image"/>
+                                {{else}}
+                                <svg class="inline-block h-10 w-10 text-gray-300"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                                {{end}}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base font-medium text-white">
+                                    {{.displayName}}
+                                </p>
+                                <p class="text-sm font-medium text-gray-400 group-hover:text-gray-300">
+                                    Logout
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="flex-shrink-0 w-14">
+                <!-- Force sidebar to shrink to fit close icon -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Static sidebar for desktop -->
+    <div class="hidden lg:flex md:flex-shrink-0">
+        <div class="flex flex-col w-64">
+            <!-- Sidebar component, swap this element with another sidebar if you like -->
+            <div class="flex flex-col h-0 flex-1 bg-gray-800">
+                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                    <div class="flex items-center flex-shrink-0 px-4">
+                        <svg class="h-8 w-8 text-spotify-green-primary"
+                             viewBox="0 0 250 250"
+                             fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M250 125C250 194.036 194.036 250 125 250C55.9644 250 0 194.036 0 125C0 55.9644 55.9644 0 125 0C194.036 0 250 55.9644 250 125ZM45.7287 117.441L108.453 63.1195C114.93 57.5107 125 62.1113 125 70.6788V99.5966L167.12 63.1195C173.597 57.5107 183.667 62.1113 183.667 70.6788V179.321C183.667 187.889 173.597 192.489 167.12 186.881L125 150.403V179.321C125 187.889 114.93 192.489 108.453 186.881L45.7287 132.559C41.1241 128.572 41.1241 121.428 45.7287 117.441Z"
+                                  fill="currentColor"/>
+                        </svg>
+                        <h1 class="inline-flex ml-3 text-xl font-bold font-display text-white">DiscoverRewind</h1>
+                    </div>
+                    <nav class="mt-5 flex-1 px-2 bg-gray-800 space-y-1">
+
+                        <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Playlist Archives
+                        </h3>
+                        <div class="space-y-1">
+                            <a href="#"
+                               class="flex items-center px-3 py-2 text-sm font-medium text-gray-400 rounded-md truncate">
+                                Discover Weekly
+                            </a>
+                            {{range .snapshots}}
+                            {{if eq .ID $.currentSnapshot.ID}}
+                            <a href="/home?snapshot={{.ID}}"
+                               class="flex items-center px-5 py-1 text-xs font-medium text-gray-300 bg-gray-700 rounded-md truncate">
+                                {{ date .CreatedAt}}
+                            </a>
+                            {{else}}
+                            <a href="/home?snapshot={{.ID}}"
+                               class="flex items-center px-5 py-1 text-xs font-medium text-gray-400 rounded-md truncate">
+                                {{date .CreatedAt}}
+                            </a>
+                            {{end}}
+                            {{end}}
+                            </a>
+                        </div>
+
+                    </nav>
+                </div>
+                <div class="flex-shrink-0 flex bg-gray-700 p-4">
+                    <a href="/logout"
+                       class="flex-shrink-0 w-full group block">
+                        <div class="flex items-center">
+                            <div>
+                                {{if .profileImageURL}}
+                                <img class="inline-block h-10 w-10 rounded-full"
+                                     src="{{ .profileImageURL}}"
+                                     alt="Profile Image"/>
+                                {{else}}
+                                <svg class="inline-block h-10 w-10 text-gray-300"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                                {{end}}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-white">
+                                    {{.displayName}}
+                                </p>
+                                <p class="text-xs font-medium text-gray-300 group-hover:text-gray-200">
+                                    Logout
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col w-0 flex-1 overflow-hidden">
+        <div class="lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+            <button @click.stop="sidebarOpen = true"
+                    class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-spotify-green-primary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-spotify-green-primary">
+                <span class="sr-only">Open sidebar</span>
+                <svg class="h-6 w-6"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     aria-hidden="true">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none"
+              tabindex="0"
+              x-data=""
+              x-init="$el.focus()">
+            <div class="py-6">
+                <div class="pt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {{if .querySnapshotNotFound}}
+                    <div class="bg-yellow-400 border-l-4 border-yellow-600 rounded p-4 -mt-10 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-yellow-600"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor"
+                                     aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    The Discover Weekly snapshot you're looking for does not exist. We're displaying your latest snapshot instead.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                    <div class="flex">
+                        <div class="ml-6 w-full flex flex-col justify-center text-white">
+                            <h4 class="uppercase font-semibold text-gray-400 text-xs">Playlist</h4>
+                            <h1 class="font-bold text-gray-400 text-3xl">Week of {{date .currentSnapshot.CreatedAt}}</h1>
+                            <h1 class="font-bold text-6xl">Discover Weekly</h1>
+                            <p class="mt-2 text-sm text-gray-300">Your weekly mixtape of fresh music. Enjoy new music and deep cuts picked for you. Updates every Monday.</p>
+                            <p class="mt-2 text-sm text-gray-300">
+                                <a href="https://open.spotify.com/user/spotify"
+                                   target="_blank"
+                                   class="text-white font-bold">Spotify</a> • {{len .currentSnapshotTracks}} songs, {{playlistDuration .totalDurationMS}}
+                            </p>
+                            <!--
+                            <div class="mt-6 flex justify-start md:justify-end">
+                                <button class="bg-spotify-green-primary text-white font-medium block py-2 px-8 rounded-full">Import into Spotify</button>
+                            </div>
+                            -->
+                        </div>
+                        {{if .currentSnapshot.ImageURL}}
+                        <img class="h-24 w-24 md:h-56 md:w-56 md:order-first"
+                             src="{{.currentSnapshot.ImageURL}}"
+                             alt="Playlist Cover Image"/>
+                        {{else}}
+                        <img class="h-24 w-24 md:h-56 md:w-56 md:order-first"
+                             src="/assets/discover_weekly_cover.png"
+                             alt="Playlist Cover Image"/>
+                        {{end}}
+                    </div>
+                    <div class="mt-16">
+                        <div class="hidden sm:flex py-2 text-gray-500 text-xs font-medium tracking-wider uppercase w-full justify-between space-x-2 border-b border-gray-700 mb-2">
+                            <div class="pr-2 w-14 text-right">#</div>
+                            <div class="text-left flex-grow">Title</div>
+                            <div class="text-left flex-grow">Album</div>
+                            <div class="hidden sm:block w-14">
+                                <svg class="h-5 w-5"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        {{range $idx, $t := .currentSnapshotTracks}}
+                        <div class="py-2 flex w-full justify-between text-gray-500 rounded-md hover:bg-gray-800">
+                            <div class="pl-4 pr-2 sm:pl-0 sm:w-14 flex-shrink-0 flex-grow-0 flex items-center justify-end text-right font-semibold">
+                                <span>{{add $idx 1}}</span>
+                            </div>
+                            <div class="ml-2 flex flex-1  flex-grow justify-start items-center">
+                                <div class="flex-shrink-0 flex-grow-0 h-16 w-16 sm:h-10 sm:w-10">
+                                    <img class="w-full"
+                                         src="{{ (index .Track.Album.Images 0).URL}}">
+                                </div>
+                                <div class="ml-2">
+                                    <a class="flex items-center text-normal text-white hover:underline"
+                                       href="https://open.spotify.com/track/{{.Track.ID}}"
+                                       target="_blank">
+                                        {{.Track.Name}}
+                                        {{if .Track.Explicit}}<span
+                                            class="ml-2 h-4 w-4 flex justify-center items-center text-gray-900 font-semibold bg-gray-500 rounded-sm"
+                                            style="font-size: 0.5rem; line-height: 1rem;">E</span>{{end}}
+                                    </a>
+                                    <div class="text-sm">
+                                        {{range $idx, $a := .Track.Artists}}
+                                        {{if $idx}},{{end}}
+                                        <a class="text-gray-400 hover:underline"
+                                           href="https://open.spotify.com/artist/{{$a.ID}}"
+                                           target="_blank">{{$a.Name}}</a>
+                                        {{end}}
+                                    </div>
+                                    <div class="flex sm:hidden text-sm">
+                                        <a class="text-sm text-gray-400 hover:underline"
+                                           href="https://open.spotify.com/album/{{.Track.AlbumID}}"
+                                           target="_blank">{{.Track.Album.Name}}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hidden sm:flex  flex-1 items-center text-left flex-grow">
+                                <a class="text-sm text-gray-400 hover:underline"
+                                   href="https://open.spotify.com/album/{{.Track.AlbumID}}"
+                                   target="_blank">{{.Track.Album.Name}}</a>
+                            </div>
+                            <div class="flex items-center flex-shrink-0 flex-grow-0 w-14">
+                                <div class="text-sm text-gray-400">{{duration .Track.DurationMS}}</div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{{end}}
