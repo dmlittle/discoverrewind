@@ -90,3 +90,5 @@ bin
 .env*
 !.env.example
 infra
+node_modules
+package-lock.json

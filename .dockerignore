@@ -90,3 +90,5 @@ bin
 *_test.go
 .env*
 infra
+node_modules
+package-lock.json

@@ -25,6 +25,11 @@ clean:
 	go clean
 	rm -rf $(BIN_DIR) $(COVERAGE_PROFILE) ./tmp
 
+.PHONY: css
+css:
+	@echo "---> Recreating tailwind.min.css file"
+	purgecss --config ./purgecss.config.js
+
 .PHONY: db\:migrate
 db\:migrate:
 	@echo "---> Migrating within Docker"
@@ -44,6 +49,7 @@ db\:rollback:
 install:
 	@echo "---> Installing dependencies"
 	go mod download
+	npm i
 
 .PHONY: lint
 lint: $(BIN_DIR)/golangci-lint
