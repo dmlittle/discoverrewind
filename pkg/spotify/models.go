@@ -23,6 +23,7 @@ type PlaylistSnapshotDetail struct {
 	Rank               int `pg:",use_zero"`
 	TrackID            string
 	Track              *Track `pg:"rel:has-one"`
+	Liked              bool   `pg:"-"`
 }
 
 type Track struct {

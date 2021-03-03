@@ -10,6 +10,7 @@ import (
 	spotifyLib "github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 	"net/http"
+	"time"
 )
 
 var errDiscoverWeeklyNotFound = errors.New("unable to find discover weekly playlist")
@@ -106,6 +107,28 @@ func (h *handler) homeHandler(c echo.Context) error {
 		return errors.WithStack(err)
 	}
 
+	spotifyClient := spotifyLib.NewAuthenticator("").NewClient(&oauth2.Token{
+		AccessToken:  authDetails.User.AccessToken,
+		TokenType:    authDetails.User.TokenType,
+		Expiry:       time.Now().Add(-time.Hour * 24),
+		RefreshToken: authDetails.User.RefreshToken,
+	})
+
+	var trackIDs []spotifyLib.ID
+
+	for _, d := range currentSnapshotDetails {
+		trackIDs = append(trackIDs, (spotifyLib.ID)(d.Track.ID))
+	}
+
+	likes, err := spotifyClient.UserHasTracks(trackIDs...)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	for idx, like := range likes {
+		currentSnapshotDetails[idx].Liked = like
+	}
+
 	totalDurationMS := 0
 	for _, detail := range currentSnapshotDetails {
 		totalDurationMS += detail.Track.DurationMS
@@ -149,4 +172,42 @@ func findDiscoverWeeklyPlaylist(c spotifyLib.Client) (*spotifyLib.FullPlaylist, 
 	}
 
 	return nil, errDiscoverWeeklyNotFound
+}
+
+func (h *handler) modifyLibraryTracks(add bool) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		authDetails, ok := auth.FromEchoContext(c)
+		if !ok {
+			return errors.WithStack(c.Redirect(http.StatusFound, "/"))
+		} else if authDetails.User.DiscoverWeeklyPlaylistID == "" {
+			return errors.WithStack(c.Redirect(http.StatusFound, "/setup"))
+		}
+
+		track := c.QueryParam("track")
+
+		if track == "" {
+			return errors.New("track query param is required")
+		}
+
+		spotifyClient := spotifyLib.NewAuthenticator("").NewClient(&oauth2.Token{
+			AccessToken:  authDetails.User.AccessToken,
+			TokenType:    authDetails.User.TokenType,
+			RefreshToken: authDetails.User.RefreshToken,
+			Expiry:       authDetails.User.TokenExpiration,
+		})
+
+		trackID := spotifyLib.ID(track)
+		var err error
+		if add {
+			err = spotifyClient.AddTracksToLibrary(trackID)
+		} else {
+			err = spotifyClient.RemoveTracksFromLibrary(trackID)
+
+		}
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		return errors.WithStack(c.NoContent(http.StatusOK))
+	}
 }

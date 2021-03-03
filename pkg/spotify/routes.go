@@ -27,6 +27,8 @@ func RegisterRoutes(e *echo.Echo, cfg *config.Config, db *pg.DB) {
 			spotify.ScopeUserReadEmail,
 			spotify.ScopeUserReadPrivate,
 			spotify.ScopeStreaming,
+			spotify.ScopeUserLibraryRead,
+			spotify.ScopeUserLibraryModify,
 		),
 		state:      cfg.OAuthStateCode,
 		userSvc:    user.New(db),

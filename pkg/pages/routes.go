@@ -25,4 +25,9 @@ func RegisterRoutes(e *echo.Echo, db *pg.DB) {
 	e.GET("/setup", h.setupHandler, auth.Middleware(db))
 
 	e.GET("/home", h.homeHandler, auth.Middleware(db))
+
+	e.POST("/saveTrack", h.modifyLibraryTracks(true), auth.Middleware(db))
+
+	e.POST("/removeTrack", h.modifyLibraryTracks(false), auth.Middleware(db))
+
 }
