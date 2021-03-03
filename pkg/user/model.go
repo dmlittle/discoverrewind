@@ -17,6 +17,7 @@ type User struct {
 	TokenType                string
 	AccessToken              string
 	RefreshToken             string
+	TokenExpiration          time.Time
 	DiscoverWeeklyPlaylistID string
 	CreatedAt                *time.Time
 	UpdatedAt                *time.Time

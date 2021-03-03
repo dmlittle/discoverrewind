@@ -27,7 +27,7 @@ func (s *Service) CreateUser(ctx context.Context, u *User) error {
 
 	_, err := s.db.ModelContext(ctx, u).
 		OnConflict("(spotify_id) DO UPDATE").
-		Set("access_token = EXCLUDED.access_token, refresh_token = EXCLUDED.refresh_token, updated_at = NOW()").
+		Set("access_token = EXCLUDED.access_token, refresh_token = EXCLUDED.refresh_token, token_expiration = EXCLUDED.token_expiration, updated_at = NOW()").
 		Insert()
 
 	return err

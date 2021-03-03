@@ -38,12 +38,13 @@ func (h *handler) callbackHandler(c echo.Context) error {
 	}
 
 	u := &user.User{
-		SpotifyID:    spotifyUser.ID,
-		DisplayName:  spotifyUser.DisplayName,
-		Product:      spotifyUser.Product,
-		TokenType:    tok.TokenType,
-		AccessToken:  tok.AccessToken,
-		RefreshToken: tok.RefreshToken,
+		SpotifyID:       spotifyUser.ID,
+		DisplayName:     spotifyUser.DisplayName,
+		Product:         spotifyUser.Product,
+		TokenType:       tok.TokenType,
+		AccessToken:     tok.AccessToken,
+		RefreshToken:    tok.RefreshToken,
+		TokenExpiration: tok.Expiry,
 	}
 
 	if len(spotifyUser.Images) > 0 {
