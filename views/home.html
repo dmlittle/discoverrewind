@@ -268,11 +268,11 @@
                             -->
                         </div>
                         {{if .currentSnapshot.ImageURL}}
-                        <img class="h-24 w-24 md:h-56 md:w-56 md:order-first"
+                        <img class="hidden sm:block h-24 w-24 md:h-56 md:w-56 md:order-first"
                              src="{{.currentSnapshot.ImageURL}}"
                              alt="Playlist Cover Image"/>
                         {{else}}
-                        <img class="h-24 w-24 md:h-56 md:w-56 md:order-first"
+                        <img class="hidden sm:block h-24 w-24 md:h-56 md:w-56 md:order-first"
                              src="/assets/discover_weekly_cover.png"
                              alt="Playlist Cover Image"/>
                         {{end}}
@@ -283,7 +283,7 @@
                             <div class="text-left flex-grow">Title</div>
                             <div class="text-left flex-grow">Album</div>
                             <div class="w-10 text-left"></div>
-                            <div class="hidden sm:block w-14">
+                            <div class="w-14">
                                 <svg class="h-5 w-5"
                                      xmlns="http://www.w3.org/2000/svg"
                                      fill="none"
