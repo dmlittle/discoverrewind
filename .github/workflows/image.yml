@@ -1,0 +1,18 @@
+name: Build and publish docker image
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build, tag, and push image
+        run: |
+          IMAGE_NAME="docker.pkg.github.com/${GITHUB_REPOSITORY}/discoverrewind:${GITHUB_SHA}"
+          echo "${{ github.token }}" | docker login https://docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
