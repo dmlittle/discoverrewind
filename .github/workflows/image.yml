@@ -24,7 +24,7 @@ jobs:
 
       - name: Tag and push image
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=ghcr.io/${{ github.repository }}
           VERSION=${GITHUB_SHA}
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
